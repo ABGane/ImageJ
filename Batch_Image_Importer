@@ -1,0 +1,21 @@
+//Batch_Image_Importer
+  //Scope for improvement with user defined stack slice number and variable naming options
+  //Tested
+
+path = getDirectory("Select the file containing the images to process");
+output = getDirectory("Select the file in which to place output");
+
+filename = getFileList(path);
+
+for (i=0; i<filename.length; i+=10){
+	
+  for (j=0; j<10; j++){
+		open(path+filename[i+j]);
+    }
+
+run("Images to Stack", "name=filename[i] title=[] use");
+  saveAs(output + filename[i] + " ALS2-5-Stack.tif");	
+
+run("Close All");
+
+}
