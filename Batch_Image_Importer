@@ -1,21 +1,24 @@
-//Batch_Image_Importer
-  //Scope for improvement with user defined stack slice number and variable naming options
-  //Tested
-
-path = getDirectory("Select the file containing the images to process");
-output = getDirectory("Select the file in which to place output");
-
-filename = getFileList(path);
-
-for (i=0; i<filename.length; i+=10){
+macro "Batch_Image_Importer" {
+	//To be improved - file naming
 	
-  for (j=0; j<10; j++){
-		open(path+filename[i+j]);
-    }
+	path = getDirectory("Select the file containing the images to process");
+	output = getDirectory("Select the file in which to place output");
 
-run("Images to Stack", "name=filename[i] title=[] use");
-  saveAs(output + filename[i] + " ALS2-5-Stack.tif");	
+	slicenumber = getNumber("Enter the number of slices per stack", 10); //The default value is 10
+	name = getString("Enter a naming suffix if required", ""); //The default is no suffix
+	
+	filename = getFileList(path);
 
-run("Close All");
+	for (i=0; i<filename.length; i+=slicenumber){
+		for (j=0; j<slicenumber; j++){
+			open(path+filename[i+j]);
+		}
+	
+	run("Images to Stack", "name=filename[i] title=[] use");
+		saveAs(output + filename[i] + name + ".tif");	
 
+	run("Close All");
+
+	}
 }
+	
