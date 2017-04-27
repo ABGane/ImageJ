@@ -1,0 +1,31 @@
+//A macro that generates stacks from the images within subfolders of a specified directory
+	//V2 sets the canvas size to avoid errors sometimes caused by the loss of a single pixel from the rightmost imaged column.
+	//V2 takes a user prompt to specify the filename prefix
+
+macro "Stacks_from_Subfolders"
+{
+
+	{
+	rootdir = getDirectory("Select the root directory");
+	outputdir = getDirectory("Select the directory to save output to");
+	identifier = getString("Enter PlatedownDate_MNSA_#_Week_#_", "default")
+
+		setBatchMode(true); 
+		list = getFileList(rootdir);
+			for (i = 0; i < list.length; i++)
+        		action(rootdir, outputdir, list[i]);
+
+		function action(rootdir, outputdir, filename) {
+			open(rootdir + filename);
+
+		{
+	
+		run("Image Sequence...", "open=[(rootdir + filename)] number=3 sort");
+		name=getTitle;
+		run("Canvas Size...", "width=7634 height=7592 position=Center"); 
+		saveAs(outputdir + identifier + name + "_Stack");
+		run("Close All");
+	
+		}
+	}
+}
