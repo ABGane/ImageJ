@@ -1,0 +1,91 @@
+//Batch Image ROI Reconstructor (BIROIR)
+//Adds autothreshold generated overlays to a stack and saves measurements per slice
+//Add algorithm
+
+{
+
+algorithm = "Moments"
+input = getDirectory("Select file containing images to process");
+output = getDirectory("Select file in which to place ouput");
+setBatchMode(true); 
+
+list = getFileList(input);
+			for (i = 0; i < list.length; i++)
+        		action(input, output, list[i]);
+
+		function action(input, output, filename) {
+			open(input + filename);
+
+name=getTitle;
+run("Remove Slice Labels"); //If you do not remove slice labels images produced from the stack will take the slice label
+rename("Image");
+run("Stack to Images");
+
+//Process Image 1
+	selectWindow("Image-0001");
+	run("Duplicate...", "title=Image-0001D");
+	run("32-bit");
+	run("Set Measurements...", "area mean modal min integrated redirect=None decimal=9"); 
+	setAutoThreshold(algorithm + " dark");
+	setOption("BlackBackground", false);
+	run("Convert to Mask");
+	run("Analyze Particles...", "display clear add");
+	run("Set Measurements...", "area mean modal min redirect=Image-0001 decimal=9");
+	run("Analyze Particles...", "display clear add");
+	saveAs("Results", output + name + algorithm + "_IntensityData1.txt");
+	selectWindow("Image-0001");
+	run("From ROI Manager");
+	run("Flatten");
+	//New image is called Image-0001-1
+	selectWindow("Image-0001");
+	close();
+	selectWindow("Image-0001D");
+	close();
+
+//Process Image 2
+	selectWindow("Image-0002");
+	run("Duplicate...", "title=Image-0002D");
+	run("32-bit");
+	run("Set Measurements...", "area mean modal min redirect=None decimal=9"); 
+	setAutoThreshold(algorithm + " dark");
+	setOption("BlackBackground", false);
+	run("Convert to Mask");
+	run("Analyze Particles...", "display clear add");
+	run("Set Measurements...", "area mean modal min redirect=Image-0002 decimal=9");
+	run("Analyze Particles...", "display clear add");
+	saveAs("Results", output + name + algorithm + "_IntensityData2.txt");
+	selectWindow("Image-0002");
+	run("From ROI Manager");
+	run("Flatten");
+	//New image is called Image-0002-1
+	selectWindow("Image-0002");
+	close();
+	selectWindow("Image-0002D");
+	close();
+	
+//Process Image 3
+	selectWindow("Image-0003");
+	run("Duplicate...", "title=Image-0003D");
+	run("32-bit");
+	run("Set Measurements...", "area mean modal min redirect=None decimal=9"); 
+	setAutoThreshold(algorithm + " dark");
+	setOption("BlackBackground", false);
+	run("Convert to Mask");
+	run("Analyze Particles...", "display clear add");
+	run("Set Measurements...", "area mean modal min redirect=Image-0003 decimal=9");
+	run("Analyze Particles...", "display clear add");
+	saveAs("Results", output + name + algorithm + "_IntensityData3.txt");
+	selectWindow("Image-0003");
+	run("From ROI Manager");
+	run("Flatten");
+	//New image is called Image-0003-1
+	selectWindow("Image-0003");
+	close();
+	selectWindow("Image-0003D");
+	close();
+	
+run("Images to Stack", "name=IROIR title=[] use");
+saveAs(output + name + algorithm + "_BIROIR.tif");
+run("Close All");
+}
+}
